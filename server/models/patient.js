@@ -26,7 +26,21 @@ const patientSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
+  },
+  registeredAt: {
+    type: Date,
+    default: Date.now
+  },
+ etat: {
+  type: String,
+  enum: ["attend", "absent", "present"],
+  default: "attend"
+},
+  appointmentDate: {
+    type: Date,
+    required: true
   }
+  
 });
 
 const Patient = mongoose.model('Patient', patientSchema);

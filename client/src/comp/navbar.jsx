@@ -17,27 +17,33 @@ const Navbar = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem("login");
-    setIsLoggedIn(false);
-    navigate("/login");
-  };
-
+const handleLogout = () => {
+  localStorage.removeItem("login");
+  localStorage.removeItem("staffName"); // حذف اسم المستخدم من localStorage
+  setIsLoggedIn(false);
+  navigate("/login");
+};
   return (
     <div className="bloc_navbar">
       <div className="navbar">
-        <Link to="/" className="titre">
-          <i
-            className="pi pi-heart"
-            style={{ fontSize: "1.2rem", marginRight: "5px", marginTop: "5px" }}
-          ></i>
+      <Link to="/" className="titre">
+  <i
+    className="pi pi-heart"
+    style={{ fontSize: "1.2rem", marginRight: "5px", marginTop: "5px" }}
+  ></i>
   {isLoggedIn ? (
-  <span>Foulen fouleni</span>
-) : (
-  <span>MediCare Clinic</span>
-)}
+<span>
+  Dr.{" "}
+  {(() => {
+    const name = localStorage.getItem("staffName") || "User";
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  })()}
+</span>
+   ) : (
+    <span>MediCare Clinic</span>
+  )}
+</Link>
 
-        </Link>
 
         <div className="bloc_links">
           <NavLink

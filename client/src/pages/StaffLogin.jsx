@@ -1,24 +1,41 @@
 import React, { useState } from "react";
 import Navbar from "../comp/navbar";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const StaffLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // حالة رسالة الخطأ
   const navigate = useNavigate();
 
-const handleLogin = (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
+  setError("");
 
-  if (email === "ex@gmail.com" && password === "1234") {
-    localStorage.setItem("login", "true");
+  try {
+    const res = await axios.post("http://localhost:3000/staff/login", {
+      email,
+      password,
+    });
 
-    const redirectPage = localStorage.getItem("redirectAfterLogin") || "/dashboard";
-    localStorage.removeItem("redirectAfterLogin"); // تنظيف
-    navigate(redirectPage);
+    if (res.data.success) {
+      localStorage.setItem("login", "true");
+      localStorage.setItem("staffName", res.data.staff.name); // هنا تخزين الاسم
 
-  } else {
-    alert("❌ Wrong email or password");
+      const redirectPage = localStorage.getItem("redirectAfterLogin") || "/dashboard";
+      localStorage.removeItem("redirectAfterLogin");
+      navigate(redirectPage);
+    } else {
+      setError(res.data.message || "Invalid email or password");
+    }
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      setError(error.response.data.message);
+    } else {
+      setError("Error connecting to server. Please try again later.");
+    }
+    console.error(error);
   }
 };
 
@@ -60,6 +77,12 @@ const handleLogin = (e) => {
                 />
               </div>
             </div>
+
+            {error && (
+              <div style={{ color: "red", marginBottom: "1rem" }}>
+                {error}
+              </div>
+            )}
 
             <button type="submit" className="sign-in-button">
               Sign in
